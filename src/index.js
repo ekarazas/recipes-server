@@ -36,6 +36,8 @@ app.post("/login", async (req, res) => {
       `SELECT * FROM users WHERE email = (${mysql.escape(req.body.email)})`
     );
 
+    con.end();
+
     if (data.length !== 1) {
       return res.status(400).send({ error: "Email or password incorrect" });
     }
@@ -74,6 +76,8 @@ app.post("/register", async (req, res) => {
       )}, '${hashedPassword}')`
     );
 
+    con.end();
+
     if (!data.affectedRows) {
       return res.status(500).send({ error: "Unexpected error occurred" });
     }
@@ -81,6 +85,48 @@ app.post("/register", async (req, res) => {
     res.send({ msg: "Successfully registered", userId: data.insertId });
   } catch (e) {
     console.log(e);
+    return res.status(500).send({ error: "Unexpected error occurred" });
+  }
+});
+
+app.get("/recipes", async (req, res) => {
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [data] = await con.execute(`SELECT * FROM recipes`);
+
+    con.end();
+
+    return res.send(data);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ error: "Unexpected error occurred" });
+  }
+});
+
+app.post("/recipes", isLoggedIn, async (req, res) => {
+  if (!req.body.image || !req.body.title || !req.body.description) {
+    return res.status(400).send({ error: "Incorrect data passed" });
+  }
+
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [data] = await con.execute(
+      `INSERT INTO recipes (image, title, description, owner_id) VALUES
+      (
+      ${mysql.escape(req.body.image)},
+      ${mysql.escape(req.body.title)},
+      ${mysql.escape(req.body.description)}, 
+      ${mysql.escape(req.user.id)}
+      )`
+    );
+
+    con.end();
+
+    return res.send(data);
+  } catch (err) {
+    console.log(err);
     return res.status(500).send({ error: "Unexpected error occurred" });
   }
 });
