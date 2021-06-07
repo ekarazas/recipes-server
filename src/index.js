@@ -149,7 +149,7 @@ app.post("/recipes", isLoggedIn, async (req, res) => {
       return res.status(500).send({ error: "Unexpected error occurred" });
     }
 
-    return res.send(data);
+    return res.send({ msg: "Succesfully added recipe" });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ error: "Unexpected error occurred" });
