@@ -42,7 +42,10 @@ app.post("/login", async (req, res) => {
       return res.status(400).send({ error: "Email or password incorrect" });
     }
 
-    const compare = await bcrypt.compare(req.body.password, data[0].password);
+    const compare = await bcrypt.compareSync(
+      req.body.password,
+      data[0].password
+    );
 
     if (!compare) {
       return res.status(400).send({ error: "Email or password incorrect" });
