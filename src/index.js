@@ -54,8 +54,8 @@ app.post("/login", async (req, res) => {
     );
 
     return res.send({ msg: "Successfully logged in", token });
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: "Unexpected error occurred" });
   }
 });
@@ -83,8 +83,8 @@ app.post("/register", async (req, res) => {
     }
 
     return res.send({ msg: "Successfully registered", userId: data.insertId });
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: "Unexpected error occurred" });
   }
 });
