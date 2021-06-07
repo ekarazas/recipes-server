@@ -42,10 +42,7 @@ app.post("/login", async (req, res) => {
       return res.status(400).send({ error: "Email or password incorrect" });
     }
 
-    const compare = bcrypt.compareSync(
-      req.body.password,
-      data[0].password
-    );
+    const compare = bcrypt.compareSync(req.body.password, data[0].password);
 
     if (!compare) {
       return res.status(400).send({ error: "Email or password incorrect" });
@@ -90,6 +87,10 @@ app.post("/register", async (req, res) => {
     console.log(error);
     return res.status(500).send({ error: "Unexpected error occurred" });
   }
+});
+
+app.get("/user", isLoggedIn, async (req, res) => {
+  res.send(req.userData);
 });
 
 app.get("/recipes", async (req, res) => {
