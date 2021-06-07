@@ -156,6 +156,21 @@ app.post("/recipes", isLoggedIn, async (req, res) => {
   }
 });
 
+app.get("/comments", async (req, res) => {
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [data] = await con.execute(`SELECT * FROM comments`);
+
+    con.end();
+
+    return res.send(data);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ error: "Unexpected error occurred" });
+  }
+});
+
 app.post("/comments", isLoggedIn, async (req, res) => {
   if (!req.body.comment || !req.body.recipeId) {
     return res.status(400).send({ error: "Incorrect data passed" });
