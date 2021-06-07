@@ -113,7 +113,7 @@ app.get("/recipes/:title", async (req, res) => {
     const con = await mysql.createConnection(mysqlConfig);
 
     const [data] = await con.execute(
-      `SELECT * FROM recipes WHERE title LIKE '${req.params.title}' LIMIT 30`
+      `SELECT * FROM recipes WHERE title LIKE '%${req.params.title}%' LIMIT 30`
     );
 
     con.end();
