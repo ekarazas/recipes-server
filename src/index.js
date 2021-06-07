@@ -104,12 +104,12 @@ app.get("/recipes", async (req, res) => {
   }
 });
 
-app.get("/recipes/:name", async (req, res) => {
+app.get("/recipes/:title", async (req, res) => {
   try {
     const con = await mysql.createConnection(mysqlConfig);
 
     const [data] = await con.execute(
-      `SELECT * FROM recipes WHERE title = ${req.params.name}`
+      `SELECT * FROM recipes WHERE title LIKE '${req.params.title}' LIMIT 30`
     );
 
     con.end();
