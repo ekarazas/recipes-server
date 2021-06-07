@@ -20,7 +20,7 @@ const mysqlConfig = {
   port: process.env.MYSQL_PORT,
 };
 
-app.get("/", isLoggedIn, (req, res) => {
+app.get("/", (req, res) => {
   res.send({ msg: "Server is running successfully" });
 });
 
@@ -53,7 +53,7 @@ app.post("/login", async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.send({ msg: "Successfully logged in", token });
+    return res.send({ msg: "Successfully logged in", token });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ error: "Unexpected error occurred" });
@@ -82,7 +82,7 @@ app.post("/register", async (req, res) => {
       return res.status(500).send({ error: "Unexpected error occurred" });
     }
 
-    res.send({ msg: "Successfully registered", userId: data.insertId });
+    return res.send({ msg: "Successfully registered", userId: data.insertId });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ error: "Unexpected error occurred" });
@@ -118,15 +118,47 @@ app.post("/recipes", isLoggedIn, async (req, res) => {
       ${mysql.escape(req.body.image)},
       ${mysql.escape(req.body.title)},
       ${mysql.escape(req.body.description)}, 
-      ${mysql.escape(req.user.id)}
+      ${req.user.id}
       )`
     );
 
     con.end();
 
+    if (!data.affectedRows) {
+      return res.status(500).send({ error: "Unexpected error occurred" });
+    }
+
     return res.send(data);
   } catch (err) {
     console.log(err);
+    return res.status(500).send({ error: "Unexpected error occurred" });
+  }
+});
+
+app.post("/comments", isLoggedIn, async (req, res) => {
+  if (!req.body.comment || !req.body.recipeId) {
+    return res.status(400).send({ error: "Incorrect data passed" });
+  }
+
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [data] = await con.execute(
+      `INSERT INTO comments (user_id, recipe_id, comment) VALUES (
+        ${req.user.id}, 
+        ${mysql.escape(req.body.recipeId)}, 
+        ${mysql.escape(req.body.comment)})`
+    );
+
+    con.end();
+
+    if (!data.affectedRows) {
+      return res.status(500).send({ error: "Unexpected error occurred" });
+    }
+
+    res.send({ msg: "Successfully added comment" });
+  } catch (e) {
+    console.log(e);
     return res.status(500).send({ error: "Unexpected error occurred" });
   }
 });
