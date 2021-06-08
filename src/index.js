@@ -201,9 +201,9 @@ app.post("/comments/:recipeID", isLoggedIn, async (req, res) => {
     const con = await mysql.createConnection(mysqlConfig);
 
     const [data] = await con.execute(
-      `INSERT INTO comments (user_id, recipe_id, comment) VALUES (
-        ${req.user.id}, 
+      `INSERT INTO comments (recipe_id, user_id, comment) VALUES (
         ${req.params.recipeID}, 
+        ${req.user.id}, 
         ${mysql.escape(req.body.comment)})`
     );
 
