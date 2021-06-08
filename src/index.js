@@ -193,7 +193,7 @@ app.get("/comments", async (req, res) => {
 });
 
 app.post("/comments/:recipeID", isLoggedIn, async (req, res) => {
-  if (!req.body.comment || !req.body.recipeId) {
+  if (!req.body.comment) {
     return res.status(400).send({ error: "Incorrect data passed" });
   }
 
@@ -203,7 +203,7 @@ app.post("/comments/:recipeID", isLoggedIn, async (req, res) => {
     const [data] = await con.execute(
       `INSERT INTO comments (user_id, recipe_id, comment) VALUES (
         ${req.user.id}, 
-        ${mysql.escape(req.params.recipeId)}, 
+        ${req.params.recipeID}, 
         ${mysql.escape(req.body.comment)})`
     );
 
