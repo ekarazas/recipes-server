@@ -108,6 +108,27 @@ app.get("/recipes", async (req, res) => {
   }
 });
 
+app.get("/recipes/:id", async (req, res) => {
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [recipe] = await con.execute(
+      `SELECT * FROM recipes WHERE id = ${mysql.escape(req.params.id)}`
+    );
+
+    const [comments] = await con.execute(
+      `SELECT * FROM recipes WHERE recipe_id = ${mysql.escape(req.params.id)}`
+    );
+
+    con.end();
+
+    return res.send({ data: recipe, comments });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ error: "Unexpected error occurred" });
+  }
+});
+
 app.get("/recipes/:title", async (req, res) => {
   try {
     const con = await mysql.createConnection(mysqlConfig);
