@@ -122,7 +122,7 @@ app.get("/recipes/:id", async (req, res) => {
 
     con.end();
 
-    return res.send({ data: recipe, comments });
+    return res.send({ data: { recipe, comments } });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ error: "Unexpected error occurred" });
