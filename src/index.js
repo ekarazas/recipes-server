@@ -117,7 +117,7 @@ app.get("/recipes/:id", async (req, res) => {
     );
 
     const [comments] = await con.execute(
-      `SELECT * FROM recipes WHERE recipe_id = ${mysql.escape(req.params.id)}`
+      `SELECT * FROM comments WHERE recipe_id = ${mysql.escape(req.params.id)}`
     );
 
     con.end();
