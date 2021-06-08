@@ -192,6 +192,23 @@ app.get("/comments", async (req, res) => {
   }
 });
 
+app.get("/comments/:recipeID", async (req, res) => {
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [data] = await con.execute(
+      `SELECT * FROM comments WHERE recipe_id = ${req.params.recipeID}`
+    );
+
+    con.end();
+
+    return res.send(data);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ error: "Unexpected error occurred" });
+  }
+});
+
 app.post("/comments/:recipeID", isLoggedIn, async (req, res) => {
   if (!req.body.comment) {
     return res.status(400).send({ error: "Incorrect data passed" });
