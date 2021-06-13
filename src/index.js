@@ -129,7 +129,7 @@ app.get("/recipes/:id", async (req, res) => {
   }
 });
 
-app.get("/recipes/:title", async (req, res) => {
+app.get("/recipes/recipe/:title", async (req, res) => {
   try {
     const con = await mysql.createConnection(mysqlConfig);
 
